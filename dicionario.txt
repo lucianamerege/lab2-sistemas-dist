@@ -1,0 +1,7 @@
+palavra, significado1, significado2
+palavrinha, sig1, sig2
+palavrona, siga1, siga2
+teste, tatatata, blab
+
+lala, lele
+listinha, primeiro
