@@ -6,7 +6,7 @@ import threading
 
 # define a localizacao do servidor
 HOST = '' # vazio indica que podera receber requisicoes a partir de qq interface de rede da maquina
-PORT = 10020 # porta de acesso
+PORT = 10003 # porta de acesso
 
 #define a lista de I/O de interesse (jah inclui a entrada padrao)
 entradas = [sys.stdin]
@@ -71,10 +71,11 @@ def retornaLista(chave, clisock):
 	else:	
 		if chave[1] in dicionario:
 			sorted = dicionario[chave[1]]
+			num = sorted[0]
 			del sorted[0]
 			sorted.sort()
-			dicionario.update({chave[1]:sorted})
-			clisock.send(str(dicionario[chave[1]]).encode('utf-8'))
+			clisock.send(str(sorted).encode('utf-8'))
+			dicionario[chave[1]].insert(0, num)
 		else:
 			clisock.send(b'[]')
 		
@@ -88,11 +89,10 @@ def checaAdicao(cmd):
 		definicoes = dicionario[add[1]]
 		definicoes.append(add[2])
 		dicionario.update({add[1]:definicoes})
-
 		with open('dicionario.txt', 'r+') as arq:
 			linhas = arq.readlines()
 			#o primeiro valor da lista é o número da linha onde está aquela palavra
-			linhas[definicoes[0]] = linhas[definicoes[0]].strip() + ', ' + add[2] + '\n'
+			linhas[int(definicoes[0])] = linhas[int(definicoes[0])].strip() + ', ' + add[2] + '\n'
 			arq.seek(0)
 			for linha in linhas:
 				arq.write(linha)
@@ -102,10 +102,10 @@ def checaAdicao(cmd):
 		with open('dicionario.txt', 'a') as arq:
 			arq.write(add[1] + ', ' + add[2] + '\n')
 
-		num_linhas = num_linhas + 1
 		definicoes = [num_linhas]
 		definicoes.append(add[2])
 		dicionario.update({add[1]:definicoes})
+		num_linhas = num_linhas + 1
 
 		return "Palavra adicionada ao dicionario" , add[1]
 	
